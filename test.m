@@ -3,56 +3,84 @@ clc
 %Detect objects using Viola-Jones Algorithm
 %To detect Face
 FDetect = vision.CascadeObjectDetector;
+EyeDetect = vision.CascadeObjectDetector('EyePairBig');
+NoseDetect = vision.CascadeObjectDetector('Nose','MergeThreshold',16);
 
 %Read the input image
 %I = imread('harrymany.jpg');
-sofie = imread('sofie/1.jpg');
-love = imread('love/test/1.jpg');
+
+sofie = imread('sofie/6.jpg');
+sofie2 = imread('sofie/4.jpg');
+love = imread('love/test/4.jpg');
+
+sofieGray = rgb2gray(sofie);
+sofie2Gray = rgb2gray(sofie2);
+loveGray = rgb2gray(love);
+
+sofieTh = im2bw(sofie);
 
 %Returns Bounding Box values based on number of objects
 BB1 = step(FDetect,sofie);
-BB2 = step(FDetect,love);
+BB2 = step(FDetect,sofie2);
+BB4 = step(FDetect,love);
 
-figure,
-%imshow(I); hold on
- 
+%figure,
+%imshow(sofie); hold on
+
 % BB x,y,w,h
-for i = 1:size(BB1,1)
-    sofieFace = sofie(BB1(i,2):(BB1(i,2) + BB1(i,4)), BB1(i,1):(BB1(i,1) + BB1(i,3)), :);
-    sofieFace = rgb2gray(sofieFace);
-  
-    loveFace = love(BB2(i,2):(BB2(i,2) + BB2(i,4)), BB2(i,1):(BB2(i,1) + BB2(i,3)), :);
-    lovesFace = rgb2gray(loveFace);
-    rectangle('Position',BB1(i,:),'LineWidth',5,'LineStyle','-','EdgeColor','r');
+sofieFace = sofie(BB1(1,2):(BB1(1,2) + BB1(1,4)), BB1(1,1):(BB1(1,1) + BB1(1,3)), :);
+sofieFace2 = sofie2(BB2(1,2):(BB2(1,2) + BB2(1,4)), BB2(1,1):(BB2(1,1) + BB2(1,3)), :);
+
+sofieFace = imresize(sofieFace,[500 500]);
+sofieFace2 = imresize(sofieFace2,[500 500]);
+
+loveFace = love(BB4(1,2):(BB4(1,2) + BB4(1,4)), BB4(1,1):(BB4(1,1) + BB4(1,3)), :);
+loveFace = imresize(loveFace,[500 500]);
+
+meanSofie = mean2(sofieFace);
+
+BB3 =step(NoseDetect,sofieFace);
+BB5 =step(NoseDetect,sofieFace2);
+BB6 =step(NoseDetect, loveFace);
+
+sofieNose = sofieFace(BB3(1,2):(BB3(1,2) + BB3(1,4)), BB3(1,1):(BB3(1,1) + BB3(1,3)), :);
+sofieNose2 = sofieFace2(BB5(1,2):(BB5(1,2) + BB5(1,4)), BB5(1,1):(BB5(1,1) + BB5(1,3)), :);
+
+loveNose = loveFace(BB6(1,2):(BB6(1,2) + BB6(1,4)), BB6(1,1):(BB6(1,1) + BB6(1,3)), :);
+
+BB4 = step(EyeDetect, sofieFace);
+sofieEye = sofieFace(BB4(1,2):(BB4(1,2) + BB4(1,4)), BB4(1,1):(BB4(1,1) + BB4(1,3)), :);
+
+BB7 = step(EyeDetect, loveFace);
+loveEye = loveFace(BB7(1,2):(BB7(1,2) + BB7(1,4)), BB7(1,1):(BB7(1,1) + BB7(1,3)), :);
+
+%% Find eye distance
+sofieEyeTh = im2bw(sofieEye, 0.3);
+[m, n] = size(sofieEyeTh);
+half = ceil(m/2);
+test = sofieEyeTh(half,:);
+
+i = 1;
+while test(1,i) == 1
+    valueStart = i;
+    i = i + 1;
 end
 
+k = n;
+while test(1,k) == 1
+    valueEnd = k;
+    k = k - 1;
+end
 
-imshow(sofieFace);
+distanceEye = valueEnd - valueStart;
+
+%% Plotting
+
+rectangle('Position',BB1(1,:),'LineWidth',5,'LineStyle','-','EdgeColor','r');
+imshow(im2bw(sofieFace));
+rectangle('Position',BB3(1,:),'LineWidth',2,'LineStyle','-','EdgeColor','r');
+imshow(sofieNose);
+rectangle('Position',BB4(1,:),'LineWidth',2,'LineStyle','-','EdgeColor','r');
+imshow(im2bw(sofieEye));
 title('Face Detection');
 hold off;
-
-
-%%
-
-%To detect Eyes
-%EyeDetect = vision.CascadeObjectDetector('EyePairBig');
-MouthDetect = vision.CascadeObjectDetector('Mouth','MergeThreshold',16);
-
-%Read the input Image
-I = imread('harrymany.jpg');
-
-%BB=step(EyeDetect,I);
-BB=step(MouthDetect,I);
-
-
-figure,imshow(I);
-
-% BB x,y,w,h
-for i = 1:size(BB,1)
-    rectangle('Position',BB(i,:),'LineWidth',2,'LineStyle','-','EdgeColor','r');
-end
-
-%rectangle('Position',BB,'LineWidth',4,'LineStyle','-','EdgeColor','b');
-title('Eyes Detection');
-Eyes=imcrop(I,BB);
-figure,imshow(Eyes);
