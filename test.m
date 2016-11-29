@@ -6,22 +6,28 @@ FDetect = vision.CascadeObjectDetector;
 
 %Read the input image
 %I = imread('harrymany.jpg');
-Sofie = imread('sofie/1.jpg');
+sofie = imread('sofie/1.jpg');
+love = imread('love/test/1.jpg');
 
 %Returns Bounding Box values based on number of objects
-BB = step(FDetect,I);
+BB1 = step(FDetect,sofie);
+BB2 = step(FDetect,love);
 
 figure,
 %imshow(I); hold on
- face = [];
  
 % BB x,y,w,h
-for i = 1:size(BB,1)
-    face = I(BB(i,2):(BB(i,2) + BB(i,4)), BB(i,1):(BB(i,1) + BB(i,3)), :);
-    rectangle('Position',BB(i,:),'LineWidth',5,'LineStyle','-','EdgeColor','r');
+for i = 1:size(BB1,1)
+    sofieFace = sofie(BB1(i,2):(BB1(i,2) + BB1(i,4)), BB1(i,1):(BB1(i,1) + BB1(i,3)), :);
+    sofieFace = rgb2gray(sofieFace);
+  
+    loveFace = love(BB2(i,2):(BB2(i,2) + BB2(i,4)), BB2(i,1):(BB2(i,1) + BB2(i,3)), :);
+    lovesFace = rgb2gray(loveFace);
+    rectangle('Position',BB1(i,:),'LineWidth',5,'LineStyle','-','EdgeColor','r');
 end
 
-imshow(face);
+
+imshow(sofieFace);
 title('Face Detection');
 hold off;
 
