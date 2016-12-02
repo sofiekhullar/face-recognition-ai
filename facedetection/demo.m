@@ -104,6 +104,8 @@ mouthColor
 
 %%
 
+
+
 data = [colorEye(:,1),spaceEyes(:,1)];
 
 [idx, centroids] = kmeans(data, 2);
