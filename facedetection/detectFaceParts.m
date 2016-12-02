@@ -53,7 +53,7 @@ partsNum = zeros(size(bbox,1),1);
 nameDetector = {'LeftEye'; 'RightEye'; 'Mouth'; 'Nose'; };
 mins = [[12 18]; [12 18]; [15 25]; [15 18]; ];
 
-stdsize = detector.stdsize; % 176
+stdsize = detector.stdsize;
 
 for k=1:4
  if( k == 1 )
@@ -71,9 +71,9 @@ for k=1:4
  bb = zeros(bbsize);
  for i=1:size(bbox,1)
   XX = X(bbox(i,2):bbox(i,2)+bbox(i,4)-1,bbox(i,1):bbox(i,1)+bbox(i,3)-1,:);
-  XX = imresize(XX,[stdsize, stdsize])
+  XX = imresize(XX,[stdsize, stdsize]);
   XX = XX(region(2,1):region(2,2),region(1,1):region(1,2),:);
-
+  
   b = step(detector.detector{k},XX);
   
   if( size(b,1) > 0 )

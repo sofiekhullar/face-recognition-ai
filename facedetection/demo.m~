@@ -1,0 +1,57 @@
+clc
+clear all
+close all
+
+nr_images = 10;
+
+detector = buildDetector();
+nosesWidth = zeros(nr_images,1);
+mouthsMean = zeros(nr_images,1);
+spaceEyes = 
+
+for i = 1:nr_images
+    path = sprintf('bothlovesofie/%d.jpg', i);
+    img = imread(path);
+    
+    [bbox bbimg faces bbfaces] = detectFaceParts(detector,img,2);
+    
+    %face = img(bbox(1,2):bbox(1,2)+bbox(1,4)-1,bbox(1,1):bbox(1,1)+bbox(1,3)-1,:);
+    %leftEye = img(bbox(1,6):bbox(1,6)+bbox(1,8)-1,bbox(1,5):bbox(1,5)+bbox(1,7)-1,:);
+    %rightEye = img(bbox(1,10):bbox(1,10)+bbox(1,12)-1,bbox(1,9):bbox(1,9)+bbox(1,11)-1,:);
+    mouth = img(bbox(1,14):bbox(1,14)+bbox(1,16)-1,bbox(1,13):bbox(1,13)+bbox(1,15)-1,:);
+    %nose = img(bbox(1,18):bbox(1,18)+bbox(1,20)-1,bbox(1,17):bbox(1,17)+bbox(1,19)-1,:);
+    %imshow(nose);
+    
+    nosesWidth(i) = bbox(1,19);
+    %mouthG = rgb2gray(mouth);
+    mouthsMean(i) = mean(mouth(:));
+    %figure;imshow(bbfaces{1});
+end
+
+%%
+%figure;imshow(bbimg);
+for i=1:size(bbfaces,1)
+ figure;imshow(bbfaces{i});
+ face = bbfaces{1};
+end
+
+
+%%
+%       bbox(:, 1: 4) is bounding box for face
+%       bbox(:, 5: 8) is bounding box for left eye
+%       bbox(:, 9:12) is bounding box for right eye
+%       bbox(:,13:16) is bounding box for mouth
+%       bbox(:,17:20) is bounding box for nose
+
+%face = image(BBface(1,2):(BBface(1,2) + BBface(1,4)), BBface(1,1):(BBface(1,1) + BBface(1,3)), :);
+%% Please uncoment to run demonstration of detectRotFaceParts
+%{
+ img = imrotate(img,180);
+ detector = buildDetector(2,2);
+ [fp bbimg faces bbfaces] = detectRotFaceParts(detector,img,2,15);
+
+ figure;imshow(bbimg);
+ for i=1:size(bbfaces,1)
+  figure;imshow(bbfaces{i});
+ end
+%}
