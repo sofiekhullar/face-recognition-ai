@@ -20,9 +20,6 @@ mouthColor = zeros(nr_images,1);
 
 eyesSpace = zeros(nr_images,1);
 
-
-
-
 for i = 1:35
 
     path = sprintf('love/%d.jpg', i);
@@ -49,13 +46,6 @@ for i = 1:35
     mouthWidth(i) = bbox(1,16);
     mouthHeight(i) = bbox(1,17);
     mouthColor(i) = mean2(mouth);
-    
-    %mouthG = rgb2gray(mouth);
-    %colorEye(i) = mean2(leftEye); % jag högre värden
-    %mouthsMean(i) = mean(mouth(:));
-    %spaceEyes(i) = abs(((bbox(1,6)+bbox(1,8)) - bbox(1,10))); % jag har något större 
-    
-    %figure;imshow(bbfaces{1});
 end
 
 for i = 1:35
@@ -70,7 +60,6 @@ for i = 1:35
     rightEye = img(bbox(1,10):bbox(1,10)+bbox(1,12)-1,bbox(1,9):bbox(1,9)+bbox(1,11)-1,:);
     mouth = img(bbox(1,14):bbox(1,14)+bbox(1,16)-1,bbox(1,13):bbox(1,13)+bbox(1,15)-1,:);
     nose = img(bbox(1,18):bbox(1,18)+bbox(1,20)-1,bbox(1,17):bbox(1,17)+bbox(1,19)-1,:);
-    
     
     nosesWidth(i+35) = bbox(1,19);
     nosesHeight(i+35) = bbox(1,20);
@@ -89,23 +78,12 @@ for i = 1:35
         mouthColor62 = mean2(mouth);
         
     end
-    
-    
-    %mouthG = rgb2gray(mouth);
-    %colorEye(i) = mean2(leftEye); % jag högre värden
-    %mouthsMean(i) = mean(mouth(:));
-    %spaceEyes(i) = abs(((bbox(1,6)+bbox(1,8)) - bbox(1,10))); % jag har något större 
-    
-    %figure;imshow(bbfaces{1});
 end
 
 mouthColor(62,1) = mouthColor62;
 mouthColor
 
 %%
-
-
-
 data = [colorEye(:,1),spaceEyes(:,1)];
 
 [idx, centroids] = kmeans(data, 2);
@@ -125,6 +103,7 @@ grid;
 %%
 close all
 %oneValues = ones(70,1);
+
 data = [mouthWidth(:,1),leftEyeWidth(:,1), nosesColor(:,1)];
 x = data(1:35,1);
 y = data(1:35,2);
@@ -186,7 +165,6 @@ correctSofie = 0;
 correctLove = 0;
 
 
-
 for i = 1:35
     if(abs(data(i,2) - meanSofie(1,2)) > abs(data(i,2) - meanLove(1,2)))
         correctLove = correctLove + 1;
@@ -219,14 +197,6 @@ hold on
 scatter(meanSofie(1, 1), meanSofie(1, 2));
 scatter(meanLove(1, 1), meanLove(1, 2));
 
-%%
-%       bbox(:, 1: 4) is bounding box for face
-%       bbox(:, 5: 8) is bounding box for left eye
-%       bbox(:, 9:12) is bounding box for right eye
-%       bbox(:,13:16) is bounding box for mouth
-%       bbox(:,17:20) is bounding box for nose
-
-%face = image(BBface(1,2):(BBface(1,2) + BBface(1,4)), BBface(1,1):(BBface(1,1) + BBface(1,3)), :);
 %% Please uncoment to run demonstration of detectRotFaceParts
 %{
  img = imrotate(img,180);
