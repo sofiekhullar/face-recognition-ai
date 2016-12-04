@@ -131,6 +131,7 @@ correctSofie
 
 %% Create the plot WITH filtering bad data
 close all
+grid on
 data = [mouthWidth(:,1),leftEyeWidth(:,1), nosesColor(:,1)];
 
 x1 = zeros(30,1);
@@ -186,7 +187,52 @@ end
 correctLove
 correctSofie
 
+title('Graph of trained data');
+xlabel('mouthWidth') % x-axis label
+ylabel('leftEyeWidth') % y-axis label
+zlabel('nosesColor') % y-axis label
+legend('Love','Sofie')
 
+
+
+%% Test function for one image
+testImg = imread('11.jpg');
+
+[bbox, bbimg, faces, bbfaces] = detectFaceParts(detector,testImg,3);
+[n,m] = size(bbox);
+
+if(n ~= 0)
+        face = testImg(bbox(1,2):bbox(1,2)+bbox(1,4)-1,bbox(1,1):bbox(1,1)+bbox(1,3)-1,:);
+        leftEye = testImg(bbox(1,6):bbox(1,6)+bbox(1,8)-1,bbox(1,5):bbox(1,5)+bbox(1,7)-1,:);
+        rightEye = testImg(bbox(1,10):bbox(1,10)+bbox(1,12)-1,bbox(1,9):bbox(1,9)+bbox(1,11)-1,:);
+        mouth = testImg(bbox(1,14):bbox(1,14)+bbox(1,16)-1,bbox(1,13):bbox(1,13)+bbox(1,15)-1,:);
+        nose = testImg(bbox(1,18):bbox(1,18)+bbox(1,20)-1,bbox(1,17):bbox(1,17)+bbox(1,19)-1,:);
+        %imshow(nose);
+
+        testNosesWidth = bbox(1,19);
+        testNosesHeight = bbox(1,20);
+        testNosesColor = mean2(nose);
+
+        testLeftEyeWidth = bbox(1,8);
+        testLeftEyeHeight = bbox(1,9);
+        tesLeftEyeColor = mean2(leftEye);
+        testEyesSpace = abs(((bbox(1,6)+bbox(1,8)) - bbox(1,10)));
+
+        testMouthWidth = bbox(1,16);
+        testMouthHeight = bbox(1,17);
+        testMouthColor = mean2(mouth);
+end
+
+testData = [testMouthWidth,testLeftEyeWidth, testNosesColor];
+
+
+if(sqrt((power(testData(1, 1) - meanSofie(1, 1),2))+(power(testData(1, 2) - meanSofie(1, 2),2))+(power(testData(1, 3) - meanSofie(1, 3),2))) < sqrt((power(testData(1, 1) - meanLove(1, 1),2))+(power(testData(1, 2) - meanLove(1, 2),2))+(power(testData(1, 3) - meanLove(1, 3),2))))
+    disp('Sofie');
+end
+
+if(sqrt((power(testData(1, 1) - meanSofie(1, 1),2))+(power(testData(1, 2) - meanSofie(1, 2),2))+(power(testData(1, 3) - meanSofie(1, 3),2))) > sqrt((power(testData(1, 1) - meanLove(1, 1),2))+(power(testData(1, 2) - meanLove(1, 2),2))+(power(testData(1, 3) - meanLove(1, 3),2))))
+    disp('Love');
+end
 %% Test one dataset
 
 close all
