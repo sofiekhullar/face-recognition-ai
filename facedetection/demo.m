@@ -129,6 +129,64 @@ correctLove
 correctSofie
 
 
+%% Create the plot WITH filtering bad data
+close all
+data = [mouthWidth(:,1),leftEyeWidth(:,1), nosesColor(:,1)];
+
+x1 = zeros(30,1);
+y1 = zeros(30,1);
+z1 = zeros(30,1);
+
+for i = 1:h_nr
+    if(data(i,1) ~= 0 && data(i,2) ~= 0 && data(i,3) ~= 0 && isnan(data(i,1)) == 0  && isnan(data(i,2)) == 0  && isnan(data(i,3)) == 0)
+        x1(i) = data(i,1);
+        y1(i) = data(i,2);
+        z1(i) = data(i,3);
+    end
+end
+ 
+hold on
+scatter3(x1, y1, z1, 10, 'red');
+
+x2 = zeros(30,1);
+y2 = zeros(30,1);
+z2 = zeros(30,1);
+
+for i = h_nr+1:nr_img
+    if(data(i,1) ~= 0 && data(i,2) ~= 0 && data(i,3) ~= 0 && isnan(data(i,1)) == 0  && isnan(data(i,2)) == 0  && isnan(data(i,3)) == 0)
+            x2(i - h_nr) = data(i,1);
+            y2(i - h_nr) = data(i,2);
+            z2(i - h_nr) = data(i,3);
+    end     
+end
+
+z2(27) = data(77,3);
+scatter3(x2, y2, z2, 10, 'blue');
+
+meanLove = [mean2(x1), mean2(y1),mean2(z1)];
+meanSofie = [mean2(x2), mean2(y2),mean2(z2)];
+hold on
+scatter3(meanSofie(1, 1), meanSofie(1, 2), meanSofie(1, 3), 80, 'blue');
+scatter3(meanLove(1, 1), meanLove(1, 2), meanLove(1, 3), 80, 'red');
+correctSofie = 0;
+correctLove = 0;
+
+for i = 1:h_nr
+    if(sqrt((power(data(i, 1) - meanSofie(1, 1),2))+(power(data(i, 2) - meanSofie(1, 2),2))+(power(data(i, 3) - meanSofie(1, 3),2))) < sqrt((power(data(i, 1) - meanLove(1, 1),2))+(power(data(i, 2) - meanLove(1, 2),2))+(power(data(i, 3) - meanLove(1, 3),2))))
+        correctSofie = correctSofie + 1;
+    end
+end
+
+for i = h_nr+1:nr_img
+    if(sqrt((power(data(i, 1) - meanSofie(1, 1),2))+(power(data(i, 2) - meanSofie(1, 2),2))+(power(data(i, 3) - meanSofie(1, 3),2))) < sqrt((power(data(i, 1) - meanLove(1, 1),2))+(power(data(i, 2) - meanLove(1, 2),2))+(power(data(i, 3) - meanLove(1, 3),2))))
+        correctLove = correctLove + 1;
+    end
+end
+
+correctLove
+correctSofie
+
+
 %% Test one dataset
 
 close all
