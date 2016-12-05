@@ -138,11 +138,16 @@ x1 = zeros(30,1);
 y1 = zeros(30,1);
 z1 = zeros(30,1);
 
+index = 0;
+
 for i = 1:h_nr
+    index = index +1;
     if(data(i,1) ~= 0 && data(i,2) ~= 0 && data(i,3) ~= 0 && isnan(data(i,1)) == 0  && isnan(data(i,2)) == 0  && isnan(data(i,3)) == 0)
-        x1(i) = data(i,1);
-        y1(i) = data(i,2);
-        z1(i) = data(i,3);
+        x1(index) = data(i,1);
+        y1(index) = data(i,2);
+        z1(index) = data(i,3);
+    else
+        index = index - 1;
     end
 end
  
@@ -153,15 +158,19 @@ x2 = zeros(30,1);
 y2 = zeros(30,1);
 z2 = zeros(30,1);
 
+index = 0;
+
 for i = h_nr+1:nr_img
+    index = index +1;
     if(data(i,1) ~= 0 && data(i,2) ~= 0 && data(i,3) ~= 0 && isnan(data(i,1)) == 0  && isnan(data(i,2)) == 0  && isnan(data(i,3)) == 0)
-            x2(i - h_nr) = data(i,1);
-            y2(i - h_nr) = data(i,2);
-            z2(i - h_nr) = data(i,3);
-    end     
+            x2(index) = data(i,1);
+            y2(index) = data(i,2);
+            z2(index) = data(i,3); 
+    else
+        index = index - 1;
+    end
 end
 
-z2(27) = data(77,3);
 scatter3(x2, y2, z2, 10, 'blue');
 
 meanLove = [mean2(x1), mean2(y1),mean2(z1)];
@@ -173,14 +182,14 @@ correctSofie = 0;
 correctLove = 0;
 
 for i = 1:h_nr
-    if(sqrt((power(data(i, 1) - meanSofie(1, 1),2))+(power(data(i, 2) - meanSofie(1, 2),2))+(power(data(i, 3) - meanSofie(1, 3),2))) < sqrt((power(data(i, 1) - meanLove(1, 1),2))+(power(data(i, 2) - meanLove(1, 2),2))+(power(data(i, 3) - meanLove(1, 3),2))))
-        correctSofie = correctSofie + 1;
+    if(sqrt((power(data(i, 1) - meanSofie(1, 1),2))+(power(data(i, 2) - meanSofie(1, 2),2))+(power(data(i, 3) - meanSofie(1, 3),2))) > sqrt((power(data(i, 1) - meanLove(1, 1),2))+(power(data(i, 2) - meanLove(1, 2),2))+(power(data(i, 3) - meanLove(1, 3),2))))
+       correctLove = correctLove + 1;
     end
 end
 
 for i = h_nr+1:nr_img
     if(sqrt((power(data(i, 1) - meanSofie(1, 1),2))+(power(data(i, 2) - meanSofie(1, 2),2))+(power(data(i, 3) - meanSofie(1, 3),2))) < sqrt((power(data(i, 1) - meanLove(1, 1),2))+(power(data(i, 2) - meanLove(1, 2),2))+(power(data(i, 3) - meanLove(1, 3),2))))
-        correctLove = correctLove + 1;
+        correctSofie = correctSofie + 1;
     end
 end
 
@@ -196,7 +205,7 @@ legend('Love','Sofie')
 
 
 %% Test function for one image
-testImg = imread('11.jpg');
+testImg = imread('love6.jpg');
 
 [bbox, bbimg, faces, bbfaces] = detectFaceParts(detector,testImg,3);
 [n,m] = size(bbox);
@@ -233,6 +242,8 @@ end
 if(sqrt((power(testData(1, 1) - meanSofie(1, 1),2))+(power(testData(1, 2) - meanSofie(1, 2),2))+(power(testData(1, 3) - meanSofie(1, 3),2))) > sqrt((power(testData(1, 1) - meanLove(1, 1),2))+(power(testData(1, 2) - meanLove(1, 2),2))+(power(testData(1, 3) - meanLove(1, 3),2))))
     disp('Love');
 end
+
+scatter3(testMouthWidth, testLeftEyeWidth, testNosesColor, 80, 'c');
 %% Test one dataset
 
 close all
